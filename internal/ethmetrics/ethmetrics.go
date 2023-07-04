@@ -1,10 +1,16 @@
 package ethmetrics
 
 import (
+	"context"
+	"fmt"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/keRin7/ethMetrics/internal/vPrometheus"
 	"github.com/keRin7/ethMetrics/internal/webServer"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
+
+	"time"
 )
 
 type EthMetrics struct {
@@ -36,10 +42,43 @@ func CreateEthMetrics(config *Config) *EthMetrics {
 	}
 }
 
-func (c *EthMetrics) Start() {
+func (c *EthMetrics) getMetrics(ctx context.Context) {
+	rpc, err := rpc.Dial("http://localhost:8545")
+	if err != nil {
+		logrus.Warn(err)
+	}
+	var result hexutil.Uint64
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			time.Sleep(time.Duration(c.Config.QueryTimeout) * time.Second)
+			if err := rpc.Call(&result, "net_peerCount"); err != nil {
+				logrus.Warn("peerCount getting error")
+			} else {
+				fmt.Println(float64(result))
+			}
+			if err := rpc.Call(&result, "eth_blockNumber"); err != nil {
+				logrus.Warn("blockNumber getting error")
+			} else {
+				fmt.Println(float64(result))
+			}
+			//			if ok, time, err := grpcHost.Check(GRPCopts); ok {
+			//				logrus.Debug(grpcHost.Config.Host + " test OK" + time.String())
+			//				c.Prom.WriteMetric(grpcHost.Config.Host, float64(time.Milliseconds()))
+			//			} else {
+			//				logrus.Debug(grpcHost.Config.Host + " test FAIL" + err.Error())
+			//				c.Prom.WriteMetric(grpcHost.Config.Host, float64(0))
+			//			}
+		}
+	}
+}
 
+func (c *EthMetrics) Start(ctx context.Context) {
 	logrus.Printf("Web started on port: %s", c.Config.WebService.Port)
 	c.Prom.InitPrometheus()
 	c.WebServer.AddHeandler("/metrics", promhttp.Handler())
+	go c.getMetrics(ctx)
 	c.WebServer.Start()
 }
