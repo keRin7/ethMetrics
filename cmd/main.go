@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/caarlos0/env"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/rpc"
-	ethMetrics "github.com/keRin7/ethMetrics/internal/ethMetrics"
+	ethMetrics "github.com/keRin7/ethmetrics/internal/ethmetrics"
+	"github.com/sirupsen/logrus"
 	//"github.com/ethereum/go-ethereum/ethclient"
 )
 
@@ -22,6 +24,11 @@ func main() {
 	//		log.Fatal(err)
 	//	}
 	config := ethMetrics.NewConfig()
+
+	err := env.Parse(config)
+	if err != nil {
+		logrus.Fatal(err)
+	}
 
 	rpc, err := rpc.Dial("http://localhost:8545")
 	if err != nil {
