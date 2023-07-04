@@ -7,7 +7,7 @@ import (
 	"github.com/caarlos0/env"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/rpc"
-	ethMetrics "github.com/keRin7/ethmetrics/internal/ethmetrics"
+	ethMetrics "github.com/keRin7/ethMetrics/internal/ethmetrics"
 	"github.com/sirupsen/logrus"
 	//"github.com/ethereum/go-ethereum/ethclient"
 )
