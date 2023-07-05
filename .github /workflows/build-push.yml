@@ -1,0 +1,20 @@
+name: Docker Image CI
+
+on:
+  create:
+    tags:
+      - '*'
+       
+jobs:
+
+  build:
+    env:
+      IMAGE_NAME: skerin44/ethmetrics
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag ${{ env.IMAGE_NAME }}:${GITHUB_REF#refs/tags/}
+    - run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p  ${{ secrets.DOCKERHUB_TOKEN }}
+    - run: docker push ${{ env.IMAGE_NAME }}:${GITHUB_REF#refs/tags/}
