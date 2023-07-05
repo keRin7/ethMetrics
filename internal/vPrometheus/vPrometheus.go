@@ -21,11 +21,11 @@ func (r *AppPrometheus) InitPrometheus() {
 			Name:      "timeouts_total",
 			Help:      "Total timeouts of jobs processed by the nodes",
 		},
-		[]string{"service", "counter"},
+		[]string{"host", "service", "counter"},
 	)
 	prometheus.MustRegister(r.Counter)
 }
 
-func (r *AppPrometheus) WriteMetric(service string, value float64) {
-	r.Counter.WithLabelValues(service, "counter").Set(float64(value))
+func (r *AppPrometheus) WriteMetric(host string, service string, value float64) {
+	r.Counter.WithLabelValues(host, service, "counter").Set(float64(value))
 }

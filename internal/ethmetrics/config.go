@@ -5,9 +5,9 @@ import (
 )
 
 type Config struct {
-	Url          string `env:"URL"`
-	LogLevel     string `env:"LOG_LEVEL" envDefault:"warn"`
-	QueryTimeout int    `env:"QUERY_TIMEOUT"  envDefault:"15"`
+	Hosts        []string `env:"HOSTS" envSeparator:","`
+	LogLevel     string   `env:"LOG_LEVEL" envDefault:"info"`
+	QueryTimeout int      `env:"QUERY_TIMEOUT"  envDefault:"15"`
 	WebService   *webServer.Config
 }
 

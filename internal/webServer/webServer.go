@@ -29,7 +29,7 @@ func (r *WebServer) Start() {
 		ReadTimeout:  20 * time.Second,
 		WriteTimeout: 20 * time.Second,
 	}
-
+	logrus.Info("Service starting on port:", r.config.Port, "...")
 	if err := server.ListenAndServe(); err != nil {
 		logrus.Println(err)
 	}
